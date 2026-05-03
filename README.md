@@ -17,4 +17,4 @@
 ## Despliegue Técnico
 - **Instancia:** AWS EC2 t3.large (Ubuntu 24.04)
 - **Comando de inicio:** `docker compose up -d`
-- **Repositorio Maestro:** [URL]
+- **Repositorio Maestro:** [[URL]](https://github.com/isii-iq/Proyecto-fullstack-equipo6)
