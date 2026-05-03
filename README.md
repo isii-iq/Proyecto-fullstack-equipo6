@@ -9,10 +9,10 @@
 | Microservicio  | Puerto | DB Name  | Funcionalidad         |
 | :------------- | :----- | :------- | :-------------------- |
 | Clientes-Service   | 8081   | clientes_db  |CRUD de cliente|
-| [Servicio 2]   | 8082   | [DB]     | CRUD de [Entidad]     |
-| [Servicio 3]   | 8083   | [DB]     | CRUD de [Entidad]     |
-| [Servicio 4]   | 8084   | [DB]     | CRUD de [Entidad]     |
-| [Servicio 5]   | 8085   | [DB]     | CRUD de [Entidad]     |
+| Catalogo-Service  | 8082   | catalogo_db    | CRUD de producto     |
+| Inventario-Service   | 8083   | inventario_db    | CRUD de inventario     |
+| Pedidos-Service | 8084   | pedidos_db   | CRUD de Pedido   |
+| Pagos-Service  | 8085   | pagos_db     | CRUD de pago    |
 
 ## Despliegue Técnico
 - **Instancia:** AWS EC2 t3.large (Ubuntu 24.04)
