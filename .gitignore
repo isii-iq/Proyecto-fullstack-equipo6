@@ -1,0 +1,25 @@
+# Compilados Java
+**/target/
+**/*.class
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Variables sensibles
+.env
+**/application-local.properties
+
