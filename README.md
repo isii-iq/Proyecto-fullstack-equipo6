@@ -1,4 +1,4 @@
-# Proyecto Semestral: [Nombre del Sistema]
+# Proyecto Semestral: Tienda E-Commerce
 
 ## Integrantes
 - Isidora Quinteros
