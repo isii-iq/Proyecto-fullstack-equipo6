@@ -25,20 +25,22 @@
 <img width="932" height="668" alt="image" src="https://github.com/user-attachments/assets/1dbd7440-edf4-4779-ad06-6ae627a53e32" />
 
 
-### Tabla de contratos
+## Tabla de contratos
 | Origen | Destino | Método | Endpoint | DTO |
-Origen,Destino,Método,Endpoint,DTO
-CATALOGO,INVENTARIO,GET,/api/inventario/{id},InventarioDTO
-ENVIOS,INVENTARIO,GET,/api/inventario/{id},InventarioDTO
-PEDIDOS,CLIENTES,GET,/api/clientes/{id},ClienteDTO
-PEDIDOS,CARRITO,GET,/api/carrito/{id},CarritoDTO
-PEDIDOS,CATALOGO,GET,/api/catalogo/{id},CatalogoDTO
-NOTIFICACIONES,PEDIDOS,GET,/api/pedidos/{id},PedidoDTO
-NOTIFICACIONES,CLIENTES,GET,/api/clientes/{id},ClienteDTO
-PAGOS,PEDIDOS,GET,/api/pedidos/{id},PedidoDTO
-CUPONES,PEDIDOS,GET,/api/pedidos/{id},PedidoDTO
-RESEÑAS,CATALOGO,GET,/api/catalogo/{id},CatalogoDTO
-RESEÑAS,CLIENTES,GET,/api/clientes/{id},ClienteDTO
+|---|---|---|---|---|
+| Catalogo | Inventario | GET | /api/producto/{id} | ProductoDTO |
+| Envios | Inventario | GET | /api/inventario/{id} | InventarioDTO |
+| Pedidos | Clientes | GET | /api/cliente/{id} | ClienteDTO |
+| Pedidos | Carrito | GET | /api/carrito/{id} | CarritoDTO |
+| Pedidos | Catalogo | GET | /api/producto/{id} | ProductoDTO |
+| Notificaciones | Pedidos | GET | /api/pedido/{id} | PedidoDTO |
+| Notificaciones | Clientes | GET | /api/cliente/{id} | ClienteDTO |
+| Reseñas | Catalogo | GET | /api/producto/{id} | ProductoDTO |
+| Reseñas | Clientes | GET | /api/cliente/{id} | ClienteDTO |
+| Pagos | Pedidos | GET | /api/pedido/{id} | PedidoDTO |
+| Cupones | Pedidos | GET | /api/pedido/{id} | PedidoDTO |
+| ... | ... | ... | ... | ... |
+
 
 ### Tecnología utilizada
 - Cliente REST: **Feign Client** (justificación: ...)
