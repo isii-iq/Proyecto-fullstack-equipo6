@@ -39,7 +39,7 @@
 | Reseñas | Clientes | GET | /api/cliente/{id} | ClienteDTO |
 | Pagos | Pedidos | GET | /api/pedido/{id} | PedidoDTO |
 | Cupones | Pedidos | GET | /api/pedido/{id} | PedidoDTO |
-| ... | ... | ... | ... | ... |
+
 
 
 ### Tecnología utilizada
