@@ -22,14 +22,15 @@
   ## 🔗 Comunicación entre microservicios (Hito 2)
 
 ### Diagrama de dependencias
-<img width="932" height="668" alt="image" src="https://github.com/user-attachments/assets/1dbd7440-edf4-4779-ad06-6ae627a53e32" />
+<img width="1011" height="711" alt="image" src="https://github.com/user-attachments/assets/0e230967-b1dc-4841-a538-08c5d794e19c" />
+
 
 
 ## Tabla de contratos
 | Origen | Destino | Método | Endpoint | DTO |
 |---|---|---|---|---|
 | Catalogo | Inventario | GET | /api/producto/{id} | ProductoDTO |
-| Envios | Inventario | GET | /api/inventario/{id} | InventarioDTO |
+| Envios | Pedidos | GET | /api/inventario/{id} | PedidoDTO |
 | Pedidos | Clientes | GET | /api/cliente/{id} | ClienteDTO |
 | Pedidos | Carrito | GET | /api/carrito/{id} | CarritoDTO |
 | Pedidos | Catalogo | GET | /api/producto/{id} | ProductoDTO |
