@@ -1,7 +1,7 @@
 package cl.duoc.clientes.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying; // Importante para borrados
+import org.springframework.data.jpa.repository.Modifying; 
 import org.springframework.stereotype.Repository;
 import cl.duoc.clientes.model.Cliente;
 import jakarta.transaction.Transactional;
