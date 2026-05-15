@@ -20,3 +20,4 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     @Transactional
     void deleteBySkuIgnoreCase(String sku);
 }
+

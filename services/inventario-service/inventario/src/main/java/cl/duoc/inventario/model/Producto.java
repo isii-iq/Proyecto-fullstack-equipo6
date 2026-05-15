@@ -24,8 +24,9 @@ public class Producto {
     @NotBlank(message = "La categoría es obligatoria")
     private String categoria;
 
-    @Min(value = 0, message = "La cantidad no puede ser menor a cero")
-    private int cantidad;
+    @NotNull(message = "La cantidad es obligatoria")
+    @Min(value = 0, message = "La cantidad no puede ser negativa")
+    private Integer cantidad;
 
     @NotBlank(message = "El código SKU es obligatorio")
     @Column(unique = true)
