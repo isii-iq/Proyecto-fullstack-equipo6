@@ -1,60 +1,119 @@
 package cl.duoc.inventario.service;
 
-import java.util.List;
-import java.util.Optional;
-import org.springframework.stereotype.Service;
+import cl.duoc.inventario.dto.InventarioCreateDTO;
+import cl.duoc.inventario.dto.InventarioDTO;
+import cl.duoc.inventario.excepciones.RecursoNoEncontradoException;
 import cl.duoc.inventario.model.Producto;
 import cl.duoc.inventario.repository.ProductoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService {
-    private final ProductoRepository productoRepository;
 
-    public ProductoService(ProductoRepository productoRepository){
-        this.productoRepository = productoRepository;
+    private static final Logger log = LoggerFactory.getLogger(ProductoService.class);
+
+    @Autowired
+    private ProductoRepository repository;
+
+    public List<InventarioDTO> obtenerTodos() {
+        log.info("Consultando todos los productos del inventario");
+        return repository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<Producto> obtenerTodos(){
-        return productoRepository.findAll();
+    public InventarioDTO obtenerPorId(Long id) {
+        log.info("Buscando producto id={}", id);
+        Producto producto = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado: " + id));
+        return toDTO(producto);
     }
 
-    public Optional<Producto> obtenerPorId(Long id) {
-        return productoRepository.findById(id);
+    public InventarioDTO obtenerPorSku(String sku) {
+        log.info("Buscando producto por SKU: {}", sku);
+        Producto producto = repository.findBySkuIgnoreCase(sku)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto con SKU " + sku + " no encontrado en inventario"));
+        return toDTO(producto);
     }
 
-    public Producto guardarProducto(Producto producto){
-        if(productoRepository.existsBySkuIgnoreCase(producto.getSku())){
-            throw new RuntimeException("El SKU ya existe en el inventario");
-        }
-        return productoRepository.save(producto);
+    public InventarioDTO guardarProducto(InventarioCreateDTO dto) {
+        log.info("Creando nuevo producto con SKU: {}", dto.getSku());
+
+        Producto producto = new Producto();
+        producto.setSku(dto.getSku());
+        producto.setNombre(dto.getNombre());
+        producto.setCantidad(dto.getCantidad());
+        producto.setPrecio(dto.getPrecio());
+        producto.setCategoria(dto.getCategoria());
+
+        Producto guardado = repository.save(producto);
+        log.info("Producto creado exitosamente con ID: {} y SKU: {}", guardado.getId(), guardado.getSku());
+        
+        return toDTO(guardado);
     }
 
-  
-    public Optional<Producto> actualizarProducto(Long id, Producto productoDetalles) {
-        return productoRepository.findById(id).map(productoExistente -> {
-            productoExistente.setNombre(productoDetalles.getNombre());
-            productoExistente.setCategoria(productoDetalles.getCategoria());
-            productoExistente.setCantidad(productoDetalles.getCantidad());
-            productoExistente.setPrecio(productoDetalles.getPrecio());
-            return productoRepository.save(productoExistente);
-        });
+    public InventarioDTO actualizarProducto(Long id, InventarioCreateDTO dto) {
+        log.info("Actualizando producto id={}", id);
+
+        Producto existente = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el producto para actualizar: " + id));
+
+        existente.setNombre(dto.getNombre());
+        existente.setCantidad(dto.getCantidad());
+        existente.setPrecio(dto.getPrecio());
+        existente.setCategoria(dto.getCategoria());
+
+        Producto actualizado = repository.save(existente);
+        log.info("Producto id={} actualizado correctamente", actualizado.getId());
+        
+        return toDTO(actualizado);
     }
 
-   //eliminar por id
     public boolean eliminarPorId(Long id) {
-        if (productoRepository.existsById(id)) {
-            productoRepository.deleteById(id);
+        log.info("Intentando eliminar producto id={}", id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            log.info("Producto id={} eliminado", id);
             return true;
         }
+        log.warn("No se pudo eliminar: producto id={} no existe", id);
         return false;
     }
 
-   //eliminar x sku
-    public boolean eliminarPorSku(String sku){
-        if (productoRepository.existsBySkuIgnoreCase(sku)){
-            productoRepository.deleteBySkuIgnoreCase(sku);
+    public boolean eliminarPorSKU(String sku) {
+        log.info("Intentando eliminar producto con SKU={}", sku);
+        if (repository.existsBySkuIgnoreCase(sku)) {
+            Producto producto = repository.findBySkuIgnoreCase(sku).orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado para eliminar: " + sku));
+            repository.delete(producto);
+            log.info("Producto con SKU={} eliminado", sku);
             return true;
         }
+        log.warn("No se pudo eliminar: SKU={} no encontrado", sku);
         return false;
+    }
+
+    private InventarioDTO toDTO(Producto p) {
+        return new InventarioDTO(
+                p.getId(),
+                p.getNombre(),
+                p.getCategoria(),
+                p.getCantidad(),
+                p.getSku(),
+                p.getPrecio()
+                
+               
+             
+               
+        );
     }
 }
+
+
+
+
