@@ -29,12 +29,12 @@ public class Pedido {
     @Positive(message = "El total debe ser un valor positivo")
     private Double total;
 
-    private String estado; // PENDIENTE, PAGADO, CANCELADO
+    private String estado; 
 
     @Column(updatable = false)
     private LocalDateTime fechaPedido;
 
-    // Relación con los items del pedido
+   
     @NotNull(message = "El pedido debe contener al menos un producto")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pedido_id")
