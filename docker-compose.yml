@@ -1,0 +1,341 @@
+services:
+ 
+  # BASES DE DATOS
+  
+  # BD Clientes 
+  db-clientes:
+    image: mysql:8.0
+    container_name: mysql_clientes
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: universidad_backend
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3306:3306"
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_db:/var/lib/mysql
+
+  #BD Catálogo
+  db-catalogo:
+    image: mysql:8.0
+    container_name: mysql_catalogo
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_catalogo
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3307:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_catalogo:/var/lib/mysql
+
+  #BD  Inventario
+  db-inventario:
+    image: mysql:8.0
+    container_name: mysql_inventario
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_inventario
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3308:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_inventario:/var/lib/mysql
+
+
+  #BD pedidos
+  db-pedidos:
+    image: mysql:8.0
+    container_name: mysql_pedidos
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_pedidos
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3309:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_pedidos:/var/lib/mysql
+
+
+
+  #BD pagos
+  db-pagos:
+    image: mysql:8.0
+    container_name: mysql_pagos
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_pagos
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3310:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_pagos:/var/lib/mysql
+
+
+
+  #BD carrito
+  db-carrito:
+    image: mysql:8.0
+    container_name: mysql_carrito
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_carrito
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3311:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_carrito:/var/lib/mysql
+
+
+#BD cupones
+  db-cupones:
+    image: mysql:8.0
+    container_name: mysql_cupones
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_cupones
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3312:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_cupones:/var/lib/mysql
+
+
+#BD envíos
+  db-envios:
+    image: mysql:8.0
+    container_name: mysql_envios
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_envios
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3313:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_envios:/var/lib/mysql
+
+
+#BD notificaciones
+  db-notificaciones:
+    image: mysql:8.0
+    container_name: mysql_notificaciones
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_notificaciones
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3314:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_notificaciones:/var/lib/mysql
+
+
+#BD reseñas
+  db-resenas:
+    image: mysql:8.0
+    container_name: mysql_resenas
+    environment:
+      MYSQL_ROOT_PASSWORD: clave_maestra_root
+      MYSQL_DATABASE: db_resenas
+      MYSQL_USER: desarrollador
+      MYSQL_PASSWORD: password_seguro_123
+    ports:
+      - "3315:3306" 
+    networks:
+      - red_interna_proyecto
+    volumes:
+      - persistencia_resenas:/var/lib/mysql
+
+
+
+  #contenedores para cada microservicio 
+  
+  modulo-clientes:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-clientes 
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db-clientes
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/clientes:/app
+    working_dir: /app
+
+  modulo-catalogo:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-catalogo
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db-catalogo
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/catalogo:/app
+    working_dir: /app
+
+  modulo-inventario:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-inventario
+    ports:
+      - "8083:8083"
+    depends_on:
+      - db-inventario
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/inventario:/app
+    working_dir: /app
+
+
+  modulo-pedidos:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-pedidos
+    ports:
+      - "8084:8084"
+    depends_on:
+      - db-pedidos
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/pedidos:/app
+    working_dir: /app
+
+
+  modulo-pagos:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-pagos
+    ports:
+      - "8085:8085"
+    depends_on:
+      - db-pagos
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/pagos:/app
+    working_dir: /app
+
+
+  modulo-carrito:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-carrito
+    ports:
+      - "8086:8086"
+    depends_on:
+      - db-carrito
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/carrito:/app
+    working_dir: /app
+
+
+  modulo-cupones:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-cupones
+    ports:
+      - "8087:8087"
+    depends_on:
+      - db-cupones
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/cupones:/app
+    working_dir: /app
+
+
+  modulo-envios:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-envios
+    ports:
+      - "8088:8088"
+    depends_on:
+      - db-envios
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/envios:/app
+    working_dir: /app
+
+
+  modulo-notificaciones:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-notificaciones
+    ports:
+      - "8089:8089"
+    depends_on:
+      - db-notificaciones
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/notificaciones:/app
+    working_dir: /app
+
+
+  modulo-resenas:
+    image: maven:3.9-eclipse-temurin-21
+    container_name: entorno-resenas
+    ports:
+      - "8090:8090"
+    depends_on:
+      - db-resenas  
+    networks:
+      - red_interna_proyecto
+    command: tail -f /dev/null
+    volumes:
+      - ./codigo-fuente/resenas:/app
+    working_dir: /app
+
+
+
+
+networks:
+  red_interna_proyecto:
+
+volumes:
+  persistencia_db:
+  persistencia_catalogo:
+  persistencia_inventario:
+  persistencia_pedidos:
+  persistencia_pagos:
+  persistencia_carrito:
+  persistencia_cupones:
+  persistencia_envios:
+  persistencia_notificaciones:
+  persistencia_resenas:
