@@ -1,43 +1,44 @@
 package cl.duoc.pagos.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "pagos")
+@Data
 public class Pago {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "El monto es obligatorio")
-    @DecimalMin(value = "0.1", message = "El monto debe ser mayor a cero")
-    private BigDecimal monto;
+    @NotNull(message = "El ID del pedido es obligatorio")
+    @Column(name = "pedido_id", nullable = false)
+    private Long pedidoId;
 
-    @NotBlank(message = "El método de pago es obligatorio")
-    private String metodoPago; 
+    @NotNull(message = "El monto no puede ser nulo")
+    @Positive(message = "El monto debe ser mayor a cero")
+    @Column(nullable = false)
+    private Double monto;
 
-    @NotBlank(message = "El estado es obligatorio")
-    private String estado; 
+    @NotBlank(message = "El método de pago es obligatorio (ej: DEBITO, CREDITO)")
+    @Column(name = "metodo_pago", nullable = false)
+    private String metodoPago;
 
-    @Column(name = "fecha_pago")
-    private LocalDateTime fechaPago;
+    @NotBlank(message = "El estado del pago es obligatorio")
+    @Column(nullable = false)
+    private String estado;
 
-    @NotBlank(message = "La boleta es obligatoria")
-    @Column(unique = true)
-    private String numeroBoleta; 
+    @NotNull(message = "La fecha de transacción es obligatoria")
+    @Column(name = "fecha_transaccion", nullable = false)
+    private LocalDateTime fechaTransaccion;
 
     @PrePersist
     protected void onCreate() {
-        this.fechaPago = LocalDateTime.now();
+        this.fechaTransaccion = LocalDateTime.now();
     }
 }

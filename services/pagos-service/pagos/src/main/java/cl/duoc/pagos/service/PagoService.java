@@ -1,62 +1,74 @@
 package cl.duoc.pagos.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import cl.duoc.pagos.client.PedidoClient;
+import cl.duoc.pagos.dto.PedidoDTO;
 import cl.duoc.pagos.model.Pago;
-import cl.duoc.pagos.repository.PagosRepository;
+import cl.duoc.pagos.repository.PagoRepository;
+import feign.FeignException;
 
 @Service
 public class PagoService {
-    private final PagosRepository pagoRepository;
 
-    public PagoService(PagosRepository pagoRepository){
-        this.pagoRepository = pagoRepository;
-    }
+    private static final Logger log = LoggerFactory.getLogger(PagoService.class);
 
-    public List<Pago> obtenerTodos(){
-        return pagoRepository.findAll();
-    }
+    @Autowired
+    private PagoRepository repository;
 
-    public Optional<Pago> obtenerPorId(Long id) {
-        return pagoRepository.findById(id);
-    }
+    @Autowired
+    private PedidoClient pedidoClient;
 
-    public Pago registrarPago(Pago pago){
-    
-        if(pagoRepository.existsByNumeroBoletaIgnoreCase(pago.getNumeroBoleta())){
-            throw new RuntimeException("El número de boleta ya está registrado");
+    public Pago procesarPago(Long pedidoId, String metodoPago) {
+        log.info("Iniciando procesamiento de pago para el Pedido ID: {}", pedidoId);
+
+        PedidoDTO pedido;
+        try {
+            log.info("Consultando datos del pedido en ms-pedidos...");
+            pedido = pedidoClient.obtenerPedidoPorId(pedidoId);
+        } catch (FeignException.NotFound e) {
+            log.error("Error: El pedido {} no existe", pedidoId);
+            throw new RuntimeException("No se puede pagar: El pedido no existe.");
+        } catch (FeignException e) {
+            log.error("Error de comunicación con ms-pedidos: {}", e.getMessage());
+            throw new RuntimeException("Error de conexión con el servicio de Pedidos.");
         }
-        
-        if(pago.getEstado() == null) {
-            pago.setEstado("PENDIENTE");
-        }
-        return pagoRepository.save(pago);
+
+        Pago pago = new Pago();
+        pago.setPedidoId(pedido.getId());
+        pago.setMonto(pedido.getTotal()); 
+        pago.setMetodoPago(metodoPago);
+        pago.setEstado("APROBADO");
+        pago.setFechaTransaccion(LocalDateTime.now());
+
+        Pago guardado = repository.save(pago);
+        log.info("Pago ID: {} registrado exitosamente para el Pedido: {}", guardado.getId(), pedidoId);
+
+        return guardado;
     }
 
-    public Optional<Pago> actualizarEstado(Long id, String nuevoEstado) {
-        return pagoRepository.findById(id).map(pagoExistente -> {
-            pagoExistente.setEstado(nuevoEstado);
-            return pagoRepository.save(pagoExistente);
-        });
-    }
+    public List<Pago> listarTodos() {
+    return repository.findAll();
+}
 
-    public boolean eliminarPorBoleta(String numeroBoleta){
-        if (pagoRepository.existsByNumeroBoletaIgnoreCase(numeroBoleta)){
-            pagoRepository.deleteByNumeroBoletaIgnoreCase(numeroBoleta);
-            return true;
-        }
-        return false;
-    }
+public Pago buscarPorId(Long id) {
+    return repository.findById(id).orElseThrow(() -> new RuntimeException("Pago no encontrado"));
+}
 
+public void eliminar(Long id) {
+    repository.deleteById(id);
+}
 
-
-    public Optional<Pago> actualizarPago(Long id, Pago pagoDetalles) {
-        return pagoRepository.findById(id).map(pagoExistente -> {
-            pagoExistente.setMonto(pagoDetalles.getMonto());
-            pagoExistente.setMetodoPago(pagoDetalles.getMetodoPago());
-            pagoExistente.setEstado(pagoDetalles.getEstado());
-            return pagoRepository.save(pagoExistente);
-        });
-    }
+public Pago actualizar(Long id, Pago nuevo) {
+    Pago existente = buscarPorId(id);
+    existente.setMetodoPago(nuevo.getMetodoPago());
+    existente.setEstado(nuevo.getEstado());
+    return repository.save(existente);
+}
 }
