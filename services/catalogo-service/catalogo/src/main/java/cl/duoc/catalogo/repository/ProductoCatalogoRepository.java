@@ -2,22 +2,22 @@ package cl.duoc.catalogo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import cl.duoc.catalogo.model.Producto;
+import cl.duoc.catalogo.model.ProductoCatalogo;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductoRepository extends JpaRepository<Producto, Long> {
+public interface ProductoCatalogoRepository extends JpaRepository<ProductoCatalogo, Long> {
 
     // Buscar por SKU 
-    Optional<Producto> findBySkuIgnoreCase(String sku);
+    Optional<ProductoCatalogo> findBySkuIgnoreCase(String sku);
 
    
     boolean existsBySkuIgnoreCase(String sku);
 
     // Buscar productos por categoría 
-    List<Producto> findByCategoriaIgnoreCase(String categoria);
+    List<ProductoCatalogo> findByCategoriaIgnoreCase(String categoria);
 
     // Buscar disponibles
-    List<Producto> findByDisponibleTrue();
+    List<ProductoCatalogo> findByDisponibleTrue();
 }
