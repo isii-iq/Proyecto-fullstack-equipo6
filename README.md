@@ -8,11 +8,16 @@
 
 | Microservicio  | Puerto | DB Name  | Funcionalidad         |
 | :------------- | :----- | :------- | :-------------------- |
-| Clientes-Service   | 8081   | clientes_db  |CRUD de cliente|
-| Catalogo-Service  | 8082   | catalogo_db    | CRUD de producto     |
-| Inventario-Service   | 8083   | inventario_db    | CRUD de inventario     |
-| Pedidos-Service | 8084   | pedidos_db   | CRUD de Pedido   |
-| Pagos-Service  | 8085   | pagos_db     | CRUD de pago    |
+| Clientes-Service   | 8081   | clientes_db  |Gestión de perfiles|
+| Catalogo-Service  | 8082   | catalogo_db    | Administración de productos y categorías |
+| Inventario-Service   | 8083   | inventario_db    |Control de existencias y de stock.|
+| Pedidos-Service | 8084   | pedidos_db   | Orquestación de compras y estados de orden   |
+| Pagos-Service  | 8085   | pagos_db     | Procesamiento de pagos.   |
+| Carrito-Service   | 8086 | carrito_db  |Gestion compra de productos por usuario.|
+| Cupones-Service  | 8087   | cupones_db    | Validación de descuento y promociones. |
+| Envios-Service   | 8088   | envios_db    | Seguimiento y despacho de productos.|
+| Notificaciones-Service | 8089   | notificacioness_db   | Gestión de alertas  |
+| Reseñas-Service  | 8090   | reseñas_db     | opiniones y calificación de productos. |
 
 ## Despliegue Técnico
 - **Instancia:** AWS EC2 t3.large (Ubuntu 24.04)
@@ -44,14 +49,13 @@
 
 
 ### Tecnología utilizada
-- Cliente REST: **Feign Client** (justificación: ...)
+- Cliente REST: **Feign Client** Se seleccionó OpenFeign por su enfoque declarativo, que permite integrar microservicios mediante interfaces anotadas de Spring Cloud. Facilita el mantenimiento de los contratos y permite una integración nativa con el manejo de excepciones y validaciones de Spring Boot.
 - Manejo de errores: `@ControllerAdvice` + excepciones personalizadas
 - Logs: SLF4J en cada llamada externa
 - Pruebas de integración: colección Postman en `/postman/hito2-integracion.json`
 
 ### Escenario de despliegue
 - [ ] Escenario A — Todos los servicios en una sola instancia EC2
-- [ ] Escenario B — Servicios distribuidos en múltiples instancias EC2
   - IPs y puertos por servicio: ...
   - Security Groups configurados: sí/no
 
