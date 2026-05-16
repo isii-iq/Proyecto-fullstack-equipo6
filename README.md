@@ -55,12 +55,20 @@
 - Pruebas de integración: colección Postman en `/postman/hito2-integracion.json`
 
 ### Escenario de despliegue
-- [ ] Escenario A — Todos los servicios en una sola instancia EC2
-  - IPs y puertos por servicio: ...
-  - Security Groups configurados: sí/no
+  * Clientes-Service: `${CLIENTEShttp://entorno-clientes:8081}`
+  * Catalogo-Service: `${CATALOGO_URL:http://entorno-catalogo:8082}`
+  * Inventario-Service: `${INVENTARIO_URL:http://entorno-inventario:8083}`
+  * Pedidos-Service: `${PEDIDOS_URL:http://entorno-pedidos:8084}`
+  * Pagos-Service: `${PAGOS_URL:http://entorno-pagos:8085}`
+  * Carrito-Service: `${CARRITO_URL:http://entorno-carrito:8086}`
+  * Cupones-Service: `${CUPONES_URL:http://entorno-cupones:8087}`
+  * Envios-Service: `${ENVIOS_URL:http://entorno-envios:8088}`
+  * Notificaciones-Service: `${NOTIFICACIONES_URL:http://entorno-notificaciones:8089}`
+  * Reseñas-Service: `${RESENAS_URL:http://entorno-resenas:8090}`
+* **Security Groups configurados:** sí (Inbound Rules abiertas para los puertos 8081-8090 y puerto 22 para SSH).
 
 ### Cómo probar la integración
 1. Levantar todos los servicios: `docker compose up -d`
 2. Importar `postman/hito2-integracion.json` en Postman
-3. Ejecutar el flujo "Crear cita - caso éxito"
-4. Para probar resiliencia: `docker stop pacientes-app` y reintentar
+3. Ejecutar el flujo "Crear pedido - caso éxito" en Postman.
+4. Para probar resiliencia: Ejecutar `docker stop pedidos-service y reintentar
