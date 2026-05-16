@@ -65,7 +65,7 @@
   * Envios-Service: `${ENVIOS_URL:http://entorno-envios:8088}`
   * Notificaciones-Service: `${NOTIFICACIONES_URL:http://entorno-notificaciones:8089}`
   * Reseñas-Service: `${RESENAS_URL:http://entorno-resenas:8090}`
-* **Security Groups configurados:** sí (Inbound Rules abiertas para los puertos 8081-8090 y puerto 22 para SSH).
+* **Security Groups configurados:** sí (Inbound Rules abiertas para los puertos 8081-8090, puerto 80 para http y puerto 22 para SSH).
 
 ### Cómo probar la integración
 1. Levantar todos los servicios: `docker compose up -d`
