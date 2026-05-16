@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cl.duoc.notificaciones.client.ClienteClient;
 import cl.duoc.notificaciones.client.PedidoClient;
@@ -20,7 +21,6 @@ import cl.duoc.notificaciones.model.Notificacion;
 import cl.duoc.notificaciones.repository.NotificacionRepository;
 import feign.FeignException;
 
-
 @Service
 public class NotificacionService {
 
@@ -33,13 +33,13 @@ public class NotificacionService {
     private ClienteClient clienteClient;
 
     @Autowired
-    private PedidoClient pedidoClient; 
+    private PedidoClient pedidoClient;
+
     public NotificacionDTO generarNotificacionPedido(Long pedidoId) {
         try {
             log.info("Iniciando flujo de notificación para Pedido ID: {}", pedidoId);
 
             PedidoDTO pedido = pedidoClient.obtenerPedidoPorId(pedidoId);
-            
             ClienteDTO cliente = clienteClient.getClienteById(pedido.getClienteId());
 
             Notificacion notificacion = new Notificacion();
@@ -80,7 +80,6 @@ public class NotificacionService {
     public NotificacionDTO guardarNotificacion(NotificacionCreateDTO dto) {
         log.info("Iniciando validación para el Usuario (Cliente): {}", dto.getUsuarioId());
 
-        
         try {
             log.info("Llamando a ms-clientes para validar usuario ID: {}", dto.getUsuarioId());
             clienteClient.getClienteById(dto.getUsuarioId());
@@ -90,7 +89,6 @@ public class NotificacionService {
             throw new ServicioNoDisponibleException("Microservicio de Clientes no disponible.");
         }
 
-      
         Notificacion notificacion = new Notificacion();
         notificacion.setUsuarioId(dto.getUsuarioId());
         notificacion.setTitulo(dto.getTitulo());
@@ -100,6 +98,27 @@ public class NotificacionService {
         Notificacion guardada = repository.save(notificacion);
         log.info("Notificación creada con éxito para el usuario {}", dto.getUsuarioId());
 
+        return toDTO(guardada);
+    }
+
+    @Transactional
+    public NotificacionDTO actualizarDesdeJson(Long id, NotificacionCreateDTO dto) {
+        Notificacion existente = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Notificación no encontrada con ID: " + id));
+
+        try {
+            clienteClient.getClienteById(dto.getUsuarioId());
+        } catch (FeignException.NotFound e) {
+            throw new RecursoNoEncontradoException("El usuario con ID " + dto.getUsuarioId() + " no existe.");
+        } catch (FeignException e) {
+            throw new ServicioNoDisponibleException("Microservicio de Clientes no disponible.");
+        }
+
+        existente.setUsuarioId(dto.getUsuarioId());
+        existente.setTitulo(dto.getTitulo());
+        existente.setMensaje(dto.getMensaje());
+        
+        Notificacion guardada = repository.save(existente);
         return toDTO(guardada);
     }
 
