@@ -45,6 +45,21 @@ public class ResenaService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Reseña no encontrada con ID: " + id));
         return toDTO(resena);
     }
+   
+    public ResenaDTO actualizar(Long id, ResenaCreateDTO dto) {
+
+    Resena existente = repository.findById(id)
+            .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró la reseña con ID: " + id));
+
+   
+    existente.setComentario(dto.getComentario());
+    existente.setCalificacion(dto.getCalificacion());
+
+    Resena actualizado = repository.save(existente);
+    return toDTO(actualizado); 
+}
+
+
 
     public ResenaDTO guardar(ResenaCreateDTO dto) {
         log.info("Iniciando validaciones para Producto: {} y Cliente: {}", dto.getProductoId(), dto.getClienteId());
