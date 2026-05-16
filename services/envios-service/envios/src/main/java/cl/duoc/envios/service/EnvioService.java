@@ -38,30 +38,33 @@ public class EnvioService {
     }
 
     public Envio crearEnvioDesdePedido(Long pedidoId) {
-    PedidoDTO pedido = pedidoClient.obtenerPedidoPorId(pedidoId);
+        PedidoDTO pedido = pedidoClient.obtenerPedidoPorId(pedidoId);
+        ClienteDTO cliente = clienteClient.obtenerClientePorId(pedido.getClienteId());
 
-    ClienteDTO cliente = clienteClient.obtenerClientePorId(pedido.getClienteId());
+        Envio envio = new Envio();
+        envio.setPedidoId(pedidoId);
+        envio.setDireccion(cliente.getDireccion());
+        envio.setComuna(cliente.getComuna());
+        envio.setEstadoEnvio("EN_PREPARACION");
+        envio.setNumeroSeguimiento("SEG-" + System.currentTimeMillis());
+        envio.setFechaDespacho(LocalDateTime.now());
 
-    Envio envio = new Envio();
-    envio.setPedidoId(pedidoId);
-    
-    envio.setDireccion(cliente.getDireccion());
-    envio.setComuna(cliente.getComuna());
-    
-    envio.setEstadoEnvio("EN_PREPARACION");
-    envio.setNumeroSeguimiento("SEG-" + System.currentTimeMillis());
-    envio.setFechaDespacho(LocalDateTime.now());
-
-    return repository.save(envio);
-}
-
-    public Envio actualizarEstado(Long id, String nuevoEstado) {
-        Envio envio = buscarPorId(id);
-        envio.setEstadoEnvio(nuevoEstado);
         return repository.save(envio);
     }
 
+    public Envio actualizarDesdeJson(Long id, Envio envioDatos) {
+        Envio envioExistente = buscarPorId(id);
+        
+        envioExistente.setPedidoId(envioDatos.getPedidoId());
+        envioExistente.setDireccion(envioDatos.getDireccion());
+        envioExistente.setComuna(envioDatos.getComuna());
+        envioExistente.setEstadoEnvio(envioDatos.getEstadoEnvio());
+        envioExistente.setNumeroSeguimiento(envioDatos.getNumeroSeguimiento());
+        
+        return repository.save(envioExistente);
+    }
+
     public Envio guardarManual(Envio envio) {
-    return repository.save(envio);
-}
+        return repository.save(envio);
+    }
 }
