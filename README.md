@@ -70,5 +70,5 @@
 ### Cómo probar la integración
 1. Levantar todos los servicios: `docker compose up -d`
 2. Importar `postman/hito2-integracion.json` en Postman
-3. Ejecutar el flujo "Crear pedido - caso éxito" en Postman.
+3. Ejecutar el flujo "Post Pedido" en Postman.
 4. Para probar resiliencia: Ejecutar `docker stop pedidos-service y reintentar
