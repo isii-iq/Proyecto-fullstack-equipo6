@@ -27,7 +27,6 @@ public class EnvioController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
-    // Este es el método del "Salto Doble" (Automático)
     @PostMapping("/generar/{pedidoId}")
     public ResponseEntity<Envio> generarDespacho(@PathVariable Long pedidoId) {
         return new ResponseEntity<>(service.crearEnvioDesdePedido(pedidoId), HttpStatus.CREATED);
@@ -38,9 +37,9 @@ public class EnvioController {
         return new ResponseEntity<>(service.guardarManual(envio), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/estado")
-    public ResponseEntity<Envio> actualizarEstado(@PathVariable Long id, @RequestBody String nuevoEstado) {
-        return ResponseEntity.ok(service.actualizarEstado(id, nuevoEstado));
+    @PutMapping("/{id}")
+    public ResponseEntity<Envio> actualizarCompleto(@PathVariable Long id, @Valid @RequestBody Envio envioDatos) {
+        return ResponseEntity.ok(service.actualizarDesdeJson(id, envioDatos));
     }
 
     @DeleteMapping("/{id}")
