@@ -3,11 +3,11 @@ package cl.duoc.catalogo.service;
 import cl.duoc.catalogo.client.InventarioClient;
 import cl.duoc.catalogo.dto.CatalogoCreateDTO;
 import cl.duoc.catalogo.dto.CatalogoDTO;
-import cl.duoc.catalogo.dto.InventarioDTO; // Asegúrate de tener este DTO creado
+import cl.duoc.catalogo.dto.InventarioDTO;
 import cl.duoc.catalogo.excepciones.RecursoNoEncontradoException;
 import cl.duoc.catalogo.model.ProductoCatalogo;
 import cl.duoc.catalogo.repository.ProductoCatalogoRepository;
-import feign.FeignException; // Importante para capturar errores de red
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,39 +34,27 @@ public class ProductoCatalogoService {
                 .collect(Collectors.toList());
     }
 
-    // --- ESTE MÉTODO ES EL QUE USA MS-PEDIDOS ---
+    // --- SE MANTIENE EL MÉTODO QUE CONSULTA POR ID ---
     public CatalogoDTO obtenerPorId(Long id) {
-        log.info("Buscando producto id={} y validando stock en Inventario", id);
+        log.info("Buscando producto id={} en catálogo local", id);
         
-        // 1. Buscamos en nuestra base de datos local
         ProductoCatalogo producto = repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado en Catálogo: " + id));
 
-        // 2. Validación de Stock con MS-INVENTARIO (Salto de Microservicio)
-        try {
-            log.info("Llamando a ms-inventario para SKU: {}", producto.getSku());
-            InventarioDTO stockInfo = inventarioClient.obtenerStockPorSku(producto.getSku());
-            
-            if (stockInfo == null || stockInfo.getCantidad() <= 0) {
-                log.warn("El producto con SKU {} no tiene stock disponible", producto.getSku());
-                throw new RuntimeException("Producto sin stock disponible en bodega.");
-            }
-            
-            log.info("Stock validado exitosamente: {} unidades disponibles", stockInfo.getCantidad());
-            
-        } catch (FeignException.NotFound e) {
-            throw new RecursoNoEncontradoException("El producto con SKU " + producto.getSku() + " no existe en Inventario.");
-        } catch (FeignException e) {
-            log.error("Error de comunicación con ms-inventario");
-            throw new RuntimeException("Servicio de Inventario no disponible actualmente.");
-        }
+        // Validación dinámica de existencia/stock en ms-inventario
+        validarSkuEnInventario(producto.getSku());
 
         return toDTO(producto);
     }
 
+    // --- VALIDACIÓN INTEGRADA AL CREAR PRODUCTO ---
     public CatalogoDTO guardarProducto(CatalogoCreateDTO dto) {
-        log.info("Creando nuevo producto con SKU: {}", dto.getSku());
+        log.info("Solicitud para crear nuevo producto con SKU: {}", dto.getSku());
         
+        // 1. Forzamos la validación remota antes de persistir el registro
+        validarSkuEnInventario(dto.getSku());
+        
+        // 2. Si es exitosa, se procede a guardar localmente
         ProductoCatalogo producto = new ProductoCatalogo();
         producto.setSku(dto.getSku());
         producto.setNombre(dto.getNombre());
@@ -87,6 +75,7 @@ public class ProductoCatalogoService {
         ProductoCatalogo existente = repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el producto para actualizar: " + id));
 
+        // (Opcional) Si en la actualización modifican el SKU, puedes agregar aquí también el validador
         existente.setNombre(dto.getNombre());
         existente.setDescripcion(dto.getDescripcion());
         existente.setPrecio(dto.getPrecio());
@@ -123,6 +112,32 @@ public class ProductoCatalogoService {
         return false;
     }
 
+    // --- MÉTODO PRIVADO CENTRALIZADO DE VALIDACIÓN FEIGN ---
+    private void validarSkuEnInventario(String sku) {
+        try {
+            log.info("Validando existencia y stock en ms-inventario para SKU: {}", sku);
+            InventarioDTO stockInfo = inventarioClient.obtenerStockPorSku(sku);
+            
+            if (stockInfo == null) {
+                throw new RecursoNoEncontradoException("El servicio de inventario no retornó información para el SKU: " + sku);
+            }
+            
+            if (stockInfo.getCantidad() <= 0) {
+                log.warn("El producto con SKU {} existe pero no tiene stock disponible", sku);
+                throw new RuntimeException("El producto no cuenta con stock disponible en bodega.");
+            }
+            
+            log.info("Validación exitosa en inventario para SKU: {}. Stock: {}", sku, stockInfo.getCantidad());
+            
+        } catch (FeignException.NotFound e) {
+            log.error("Validación fallida: El SKU {} no existe en el sistema de Inventario", sku);
+            throw new RecursoNoEncontradoException("No se puede operar: El SKU " + sku + " no existe registrado en Inventario.");
+        } catch (FeignException e) {
+            log.error("Error crítico de comunicación con ms-inventario al validar SKU: {}", sku);
+            throw new RuntimeException("Servicio de Inventario no disponible. Intente más tarde.");
+        }
+    }
+
     private CatalogoDTO toDTO(ProductoCatalogo p) {
         return new CatalogoDTO(
                 p.getId(),
@@ -131,7 +146,8 @@ public class ProductoCatalogoService {
                 p.getPrecio(),
                 p.getCategoria(),
                 p.getSku(),
-                p.isDisponible()  
+                p.isDisponible()
+                
         );
-    }
-}
+    } 
+}      
