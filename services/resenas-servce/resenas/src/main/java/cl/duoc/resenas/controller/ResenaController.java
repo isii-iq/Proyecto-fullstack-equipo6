@@ -37,6 +37,12 @@ public class ResenaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(dto));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ResenaDTO> actualizar(@PathVariable Long id, @Valid @RequestBody ResenaCreateDTO dto) {
+        return ResponseEntity.ok(service.actualizar(id, dto));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         boolean eliminado = service.eliminar(id);
