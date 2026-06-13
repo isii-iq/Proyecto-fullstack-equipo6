@@ -15,5 +15,5 @@
 
 ### Reflexión y Deuda Técnica
 - **Riesgo sin probar:** Actualmente se asume que los DTOs de entrada (`InventarioCreateDTO`) llegan sanitizados desde el controlador, pero falta evaluar si se le envía un precio negativo o un SKU vacío.
-- **Acción Futura:** Implementar pruebas unitarias de validación de argumentos en el Servicio para capturar excepciones de negocio (`IllegalArgumentException`)
+- **Acción Futura:**
 - **Responsable:** Equipo Backend 
