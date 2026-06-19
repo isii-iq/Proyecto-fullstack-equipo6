@@ -36,7 +36,6 @@ class ProductoCatalogoControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Configuración standalone idéntica a la estructura entregada por el profesor
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
                 .build();
