@@ -59,7 +59,7 @@ public class ProductoCatalogoController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<CatalogoDTO> actualizar(
-        @Parameter(description = "ID de la mascota a actualizar") 
+        @Parameter(description = "ID a actualizar") 
         @PathVariable Long id, 
         @Valid @RequestBody CatalogoCreateDTO dto
     ) {
@@ -73,7 +73,7 @@ public class ProductoCatalogoController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(
-        @Parameter(description = "ID de la mascota a eliminar") 
+        @Parameter(description = "ID a eliminar") 
         @PathVariable Long id
     ) {
         boolean eliminado = service.eliminarPorId(id);
