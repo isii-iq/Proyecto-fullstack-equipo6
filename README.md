@@ -72,3 +72,16 @@
 2. Importar `postman/hito2-integracion.json` en Postman
 3. Ejecutar el flujo "Post Pedido" en Postman.
 4. Para probar resiliencia: Ejecutar `docker stop pedidos-service y reintentar
+
+### Swagger UI
+  * Clientes-Service: http://localhost:8081/doc/swagger-ui.html
+  * Catalogo-Service: http://localhost:8082/doc/swagger-ui.html
+  * Inventario-Service:http://localhost:8083/doc/swagger-ui.html
+  * Pedidos-Service: http://localhost:8084/doc/swagger-ui.html
+  * Pagos-Service:  http://localhost:8085/doc/swagger-ui.html
+  * Carrito-Service:http://localhost:8086/doc/swagger-ui.html
+  * Cupones-Service: http://localhost:8087/doc/swagger-ui.html
+  * Envios-Service: http://localhost:8088/doc/swagger-ui.html
+  * Notificaciones-Service:http://localhost:8089/doc/swagger-ui.html
+  * Reseñas-Service:http://localhost:8090/doc/swagger-ui.html
+
